@@ -157,7 +157,7 @@ class TimerSendNotification(TimerBase):
             text = u"Le minuteur de {} vient de ce terminer je doit vous rappeler de {}".format(
                 self.durationRaw, self.sentence)
         
-        self.hermes.publish_start_session_notification(site_id=self.site_id, session_init_value=text,
+        self.hermes.publish_start_session_notification(site_id=self.site_id, session_initiation_text=text,
                                                        custom_data=None)
 
     def send_end(self):
