@@ -1,2 +1,1 @@
-hermes_python>=0.1
-future
+hermes_python>=0.3.3

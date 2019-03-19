@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # coding: utf-8
 
 from hermes_python.hermes import Hermes
@@ -46,7 +46,6 @@ class TimerBase(Thread):
 
         self.send_end()
 
-    
     @staticmethod
     def get_seconds_from_duration(duration):
     
@@ -101,7 +100,7 @@ class TimerBase(Thread):
     def remaining_time(self):
         if self._start_time == 0:
             return 0
-        return int((self._start_time +self.wait_seconds) - time.time())
+        return int((self._start_time + self.wait_seconds) - time.time())
 
     @property
     def remaining_time_str(self):        
@@ -158,7 +157,7 @@ class TimerSendNotification(TimerBase):
             text = u"Le minuteur de {} vient de ce terminer je doit vous rappeler de {}".format(
                 self.durationRaw, self.sentence)
         
-        self.hermes.publish_start_session_notification(site_id=self.site_id, session_init_value=text,
+        self.hermes.publish_start_session_notification(site_id=self.site_id, session_initiation_text=text,
                                                        custom_data=None)
 
     def send_end(self):
@@ -196,6 +195,7 @@ def timerAction(hermes, intentMessage):
     timer = TimerSendAction(hermes, intentMessage)
     timer.start()
 
+
 def timerRemainingTime(hermes, intentMessage):
     len_timer_list = len(TIMER_LIST)
     if len_timer_list < 1:
@@ -207,9 +207,11 @@ def timerRemainingTime(hermes, intentMessage):
             if len_timer_list <= i:
                 text += u", "
         hermes.publish_end_session(intentMessage.session_id, text)
-            
+
+
 def timerList(hermes, intentMessage):
     pass
+
 
 def timerRemove(hermes, intentMessage):
     pass
