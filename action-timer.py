@@ -7,9 +7,7 @@ import time
 from threading import Thread
 
 
-MQTT_IP_ADDR = "localhost"
-MQTT_PORT = 1883
-MQTT_ADDR = "{}:{}".format(MQTT_IP_ADDR, str(MQTT_PORT))
+MQTT_ADDR = "localhost:1883" 
 
 TIMER_LIST = []
 
