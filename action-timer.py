@@ -219,6 +219,6 @@ def timerRemove(hermes, intentMessage):
 if __name__ == "__main__":    
 
     with Hermes(MQTT_ADDR) as h:
-        h.subscribe_intent("Mcitar:timerRemember", timerRemember)\
-            .subscribe_intent("Mcitar:timerRemainingTime", timerRemainingTime)\
+        h.subscribe_intent("mcitar:timerRemember", timerRemember)\
+            .subscribe_intent("mcitar:timerRemainingTime", timerRemainingTime)\
             .loop_forever()
