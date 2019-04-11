@@ -210,7 +210,8 @@ def timerRemainingTime(hermes, intentMessage):
 
 
 def timerList(hermes, intentMessage):
-    pass
+	timer.end()
+    
 
 
 def timerRemove(hermes, intentMessage):
