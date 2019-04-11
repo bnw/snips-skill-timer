@@ -7,7 +7,9 @@ import time
 from threading import Thread
 
 
-MQTT_ADDR = "localhost:1883" 
+MQTT_IP_ADDR = "localhost"
+MQTT_PORT = 1883
+MQTT_ADDR = "{}:{}".format(MQTT_IP_ADDR, str(MQTT_PORT))
 
 TIMER_LIST = []
 
@@ -20,21 +22,23 @@ class TimerBase(Thread):
         super(TimerBase, self).__init__()
 
         self._start_time = 0
-        
+
         self.hermes = hermes
         self.session_id = intentMessage.session_id
         self.site_id = intentMessage.site_id
-        
+
         if intentMessage.slots.duration:
             duration = intentMessage.slots.duration.first()
+            print(intentMessage.slots.duration)
             self.durationRaw = self.get_duration_raw(duration)
-        
             self.wait_seconds = self.get_seconds_from_duration(duration)
+            hermes.publish_start_session_notification(intentMessage.session_id, duration, "")
+
         else:
             text_now = u"Ich habe die Dauer des Timers nicht verstanden, sorry"
             hermes.publish_end_session(intentMessage.session_id, text_now)
             raise Exception('Timer need dutration')
-            
+
         if intentMessage.slots.sentence:
             self.sentence = intentMessage.slots.sentence.first().rawValue
         else:
@@ -46,26 +50,26 @@ class TimerBase(Thread):
 
     @staticmethod
     def get_seconds_from_duration(duration):
-    
+
         days = duration.days
         hours = duration.hours
         minutes = duration.minutes
         seconds = duration.seconds
         return timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds).total_seconds()
-    
+
     @staticmethod
     def get_duration_raw(duration):
 
         result = ''
-        
+
         days = duration.days
         hours = duration.hours
         minutes = duration.minutes
         seconds = duration.seconds
-        
+
         length = 0
-        
-        if seconds > 0:        
+
+        if seconds > 0:
             result = '{} Sekunde'.format(str(seconds))
             length += 1
         if minutes > 0:
@@ -101,7 +105,7 @@ class TimerBase(Thread):
         return int((self._start_time + self.wait_seconds) - time.time())
 
     @property
-    def remaining_time_str(self):        
+    def remaining_time_str(self):
         seconds = self.remaining_time
 
         if seconds == 0:
@@ -110,20 +114,20 @@ class TimerBase(Thread):
         result = ''
         add_and = ''
         t = str(timedelta(seconds=seconds)).split(':')
-        
+
         if int(t[2]) > 0:
             add_and = ' et '
             result += "{} secondes".format(int(t[2]))
-        
-        if int(t[1]) > 0:         
+
+        if int(t[1]) > 0:
             result = "{} minutes {}{}".format(int(t[1]), add_and, result)
             if add_and != '':
                 add_and = ', '
             else:
                 add_and = ' et '
-        
+
         if int(t[0]) > 0:
-            
+
             result = "{} heures{}{}".format(int(t[0]), add_and, result)
         return result
 
@@ -145,7 +149,7 @@ class TimerBase(Thread):
     def send_end(self):
         raise NotImplementedError('You should implement your send end')
 
-                
+
 class TimerSendNotification(TimerBase):
 
     def callback(self):
@@ -154,7 +158,7 @@ class TimerSendNotification(TimerBase):
         else:
             text = u"Dein Timer {} ist abgelaufen{}".format(
                 self.durationRaw, self.sentence)
-        
+
         self.hermes.publish_start_session_notification(site_id=self.site_id, session_initiation_text=text,
                                                        custom_data=None)
 
@@ -163,13 +167,13 @@ class TimerSendNotification(TimerBase):
             text_now = u"Ich werde dich in {} daran errinern dass Dein Timer abgelaufen ist".format(str(self.durationRaw))
         else:
             text_now = u"Ich erinnere dich an {} {}".format(str(self.durationRaw), str(self.sentence))
-        
+
         self.hermes.publish_end_session(self.session_id, text_now)
 
 
 class TimerSendAction(TimerBase):
 
-    def callback(self):        
+    def callback(self):
         self.hermes.publish_start_session_action(site_id=self.site_id, session_init_text=self.sentence,
                                                  session_init_intent_filter=[],
                                                  session_init_can_be_enqueued=False, custom_data=None)
@@ -182,11 +186,11 @@ class TimerSendAction(TimerBase):
 
 
 def timerRemember(hermes, intentMessage):
-    
+
     timer = TimerSendNotification(hermes, intentMessage)
     timer.start()
-        
-        
+
+
 def timerAction(hermes, intentMessage):
 
     # Example in 15 minutes start the TV
@@ -200,7 +204,7 @@ def timerRemainingTime(hermes, intentMessage):
         hermes.publish_end_session(intentMessage.session_id, "Es läuft kein Timer")
     else:
         text = u''
-        for i, timer in enumerate(TIMER_LIST):            
+        for i, timer in enumerate(TIMER_LIST):
             text += u"Es sind noch {} auf dein Timer{}".format(i + 1, timer.remaining_time_str)
             if len_timer_list <= i:
                 text += u", "
@@ -209,16 +213,15 @@ def timerRemainingTime(hermes, intentMessage):
 
 def timerList(hermes, intentMessage):
 	timer.end()
-    
 
 
 def timerRemove(hermes, intentMessage):
     pass
 
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
 
     with Hermes(MQTT_ADDR) as h:
         h.subscribe_intent("mcitar:timerRemember", timerRemember)\
-            .subscribe_intent("mcitar:timerRemainingTime", timerRemainingTime)\
+            .subscribe_intent("Tealque:timerRemainingTime", timerRemainingTime)\
             .loop_forever()
