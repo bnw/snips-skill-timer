@@ -26,11 +26,13 @@ class TimerBase(Thread):
         self.session_id = intentMessage.session_id
         self.site_id = intentMessage.site_id
 
+        print(intentMessage.slots)
+
         if intentMessage.slots.duration:
             duration = intentMessage.slots.duration.first()
             hermes.publish_start_session_notification(intentMessage.session_id, duration, "")
             self.durationRaw = self.get_duration_raw(duration)
-            
+
             self.wait_seconds = self.get_seconds_from_duration(duration)
         else:
             text_now = u"Ich habe die Dauer des Timers nicht verstanden, sorry"
