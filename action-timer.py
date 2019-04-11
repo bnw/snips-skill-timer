@@ -4,7 +4,7 @@ from hermes_python.hermes import Hermes
 from datetime import timedelta
 import time
 from threading import Thread
-from soundplayer import SoundPlayer
+import subprocess
 
 MQTT_IP_ADDR = "localhost"
 MQTT_PORT = 1883
@@ -153,14 +153,12 @@ class TimerBase(Thread):
 class TimerSendNotification(TimerBase):
 
     def callback(self):
-        p = SoundPlayer("wakeup.wav", 1)
-        p.play(0.5)
         if self.sentence is None:
             text = u"Dein Teimer {} ist gerade abgelaufen".format(str(self.durationRaw))
         else:
             text = u"Dein Teimer {} ist abgelaufen{}".format(
                 self.durationRaw, self.sentence)
-
+        subprocess.call('aplay -fdat /var/lib/snips/skills/snips-skill-timer/wakeup.wav', shell=True)
         self.hermes.publish_start_session_notification(site_id=self.site_id, session_initiation_text=text,
                                                        custom_data=None)
 
