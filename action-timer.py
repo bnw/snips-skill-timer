@@ -33,7 +33,7 @@ class TimerBase(Thread):
         
             self.wait_seconds = self.get_seconds_from_duration(duration)
         else:
-            text_now = u"Je n'ai pas compris la duré du minuteur, désolé."
+            text_now = u"Ich habe die Dauer des Timers nicht verstanden, sorry"
             hermes.publish_end_session(intentMessage.session_id, text_now)
             raise Exception('Timer need dutration')
             
@@ -68,32 +68,32 @@ class TimerBase(Thread):
         length = 0
         
         if seconds > 0:        
-            result = '{} seconds'.format(str(seconds))
+            result = '{} Sekunde'.format(str(seconds))
             length += 1
         if minutes > 0:
             if length > 0:
-                add_and = ' et '
+                add_and = ' und '
             else: 
                 add_and = ''
-            result = '{} minutes{}{}'.format(str(minutes), add_and, result)
+            result = '{} Minuten{}{}'.format(str(minutes), add_and, result)
             length += 1
         if hours > 0:
             if length > 1:
                 add_and = ', '
             elif length > 0:
-                add_and = ' et '
+                add_and = ' und '
             else: 
                 add_and = ''
-            result = '{} heures{}{}'.format(str(hours), add_and, result)
+            result = '{} Stunden{}{}'.format(str(hours), add_and, result)
             length += 1
         if days > 0:
             if length > 1:
                 add_and = ', '
             elif length > 0:
-                add_and = ' et '
+                add_and = ' und '
             else: 
                 add_and = ''
-            result = '{} jours{}{}'.format(str(days), add_and, result)
+            result = '{} Tagen{}{}'.format(str(days), add_and, result)
         return result
 
     @property
@@ -152,9 +152,9 @@ class TimerSendNotification(TimerBase):
 
     def callback(self):
         if self.sentence is None:
-            text = u"Le minuteur de {} vient de ce terminer".format(str(self.durationRaw))
+            text = u"Dein Timer {} ist gerade abgelaufen".format(str(self.durationRaw))
         else:
-            text = u"Le minuteur de {} vient de ce terminer je doit vous rappeler de {}".format(
+            text = u"Dein Timer {} ist abgelaufen{}".format(
                 self.durationRaw, self.sentence)
         
         self.hermes.publish_start_session_notification(site_id=self.site_id, session_initiation_text=text,
@@ -162,9 +162,9 @@ class TimerSendNotification(TimerBase):
 
     def send_end(self):
         if self.sentence is None:
-            text_now = u"Je vous rappelerais dans {} que le minuteur c'est terminé".format(str(self.durationRaw))
+            text_now = u"Ich werde dich in {} daran errinern dass Dein Timer abgelaufen ist".format(str(self.durationRaw))
         else:
-            text_now = u"Je vous rappelerais dans {} de {}".format(str(self.durationRaw), str(self.sentence))
+            text_now = u"Ich erinnere dich an {} {}".format(str(self.durationRaw), str(self.sentence))
         
         self.hermes.publish_end_session(self.session_id, text_now)
 
@@ -179,7 +179,7 @@ class TimerSendAction(TimerBase):
     def send_end(self):
         if self.sentence is None:
             raise Exception('TimerSendAction need sentence with action')
-        text_now = u"Dans {} je ferais l'action: {}".format(str(self.durationRaw), str(self.sentence))
+        text_now = u"In {} werde ich folgendes tun: {}".format(str(self.durationRaw), str(self.sentence))
         self.hermes.publish_end_session(self.session_id, text_now)
 
 
@@ -203,7 +203,7 @@ def timerRemainingTime(hermes, intentMessage):
     else:
         text = u''
         for i, timer in enumerate(TIMER_LIST):            
-            text += u"Pour le minuteur numéro {} il reste {}".format(i + 1, timer.remaining_time_str)
+            text += u"Es sind noch {} auf dein Timer{}".format(i + 1, timer.remaining_time_str)
             if len_timer_list <= i:
                 text += u", "
         hermes.publish_end_session(intentMessage.session_id, text)
