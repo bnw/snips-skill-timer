@@ -4,7 +4,7 @@ from hermes_python.hermes import Hermes
 from datetime import timedelta
 import time
 from threading import Thread
-
+from soundplayer import SoundPlayer
 
 MQTT_IP_ADDR = "localhost"
 MQTT_PORT = 1883
@@ -25,8 +25,7 @@ class TimerBase(Thread):
         self.hermes = hermes
         self.session_id = intentMessage.session_id
         self.site_id = intentMessage.site_id
-
-        print(intentMessage.slots)
+        self.sentence = None
 
         if intentMessage.slots.duration:
             duration = intentMessage.slots.duration.first()
@@ -39,10 +38,11 @@ class TimerBase(Thread):
             hermes.publish_end_session(intentMessage.session_id, text_now)
             raise Exception('Timer need dutration')
 
-        if intentMessage.slots.sentence:
-            self.sentence = intentMessage.slots.sentence.first().rawValue
-        else:
-            self.sentence = None
+
+        #if intentMessage.slots.sentence: .... dont know why this is not working...
+        #    self.sentence = intentMessage.slots.sentence.first().rawValue
+        #else:
+        #    self.sentence = None
 
         TIMER_LIST.append(self)
 
@@ -159,6 +159,9 @@ class TimerSendNotification(TimerBase):
             text = u"Dein Timer {} ist abgelaufen{}".format(
                 self.durationRaw, self.sentence)
 
+        p = SoundPlayer("wakeup.wav", 1)
+        p.play(0.5)  
+
         self.hermes.publish_start_session_notification(site_id=self.site_id, session_initiation_text=text,
                                                        custom_data=None)
 
@@ -208,9 +211,13 @@ def timerRemainingTime(hermes, intentMessage):
                 text += u", "
         hermes.publish_end_session(intentMessage.session_id, text)
 
+def timerRemove(hermes, intentMessage):
+    TIMER_LIST = []
+    text = u'Alle Timer wurde abgebrochen'
+    hermes.publish_end_session(intentMessage.session_id, text)
 
 def timerList(hermes, intentMessage):
-	timer.end()
+    timer.end()
 
 
 def timerRemove(hermes, intentMessage):
@@ -221,5 +228,6 @@ if __name__ == "__main__":
 
     with Hermes(MQTT_ADDR) as h:
         h.subscribe_intent("mcitar:timerRemember", timerRemember)\
-            .subscribe_intent("mcitar:timerRemainingTime", timerRemainingTime)\
-            .loop_forever()
+            .subscribe_intent("mcitar:timerRemainingTime", timerRemainingTime) \
+                .subscribe_intent("mcitar:timerRemove", timerRemove) \
+                .loop_forever()
