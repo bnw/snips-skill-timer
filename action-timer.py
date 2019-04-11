@@ -4,7 +4,6 @@ from hermes_python.hermes import Hermes
 from datetime import timedelta
 import time
 from threading import Thread
-import subprocess
 
 MQTT_IP_ADDR = "localhost"
 MQTT_PORT = 1883
@@ -29,7 +28,6 @@ class TimerBase(Thread):
 
         if intentMessage.slots.duration:
             duration = intentMessage.slots.duration.first()
-            hermes.publish_start_session_notification(intentMessage.session_id, duration, "")
             self.durationRaw = self.get_duration_raw(duration)
 
             self.wait_seconds = self.get_seconds_from_duration(duration)
@@ -133,7 +131,7 @@ class TimerBase(Thread):
 
     def run(self):
 
-        print("[{}] Start timer: wait {} seconds".format(time.time(), self.wait_seconds))
+        print("[{}] Start teimer: wait {} seconds".format(time.time(), self.wait_seconds))
         self._start_time = time.time()
         time.sleep(self.wait_seconds)
         self.__callback()
@@ -154,11 +152,11 @@ class TimerSendNotification(TimerBase):
 
     def callback(self):
         if self.sentence is None:
-            text = u"Dein Teimer {} ist gerade abgelaufen".format(str(self.durationRaw))
+            text = u"Dein {} Teimer ist abgelaufen".format(str(self.durationRaw))
         else:
-            text = u"Dein Teimer {} ist abgelaufen{}".format(
+            text = u"Dein {} Teimer ist abgelaufen{}".format(
                 self.durationRaw, self.sentence)
-        subprocess.call('aplay -fdat /var/lib/snips/skills/snips-skill-timer/wakeup.wav', shell=True)
+
         self.hermes.publish_start_session_notification(site_id=self.site_id, session_initiation_text=text,
                                                        custom_data=None)
 
@@ -209,7 +207,8 @@ def timerRemainingTime(hermes, intentMessage):
         hermes.publish_end_session(intentMessage.session_id, text)
 
 def timerRemove(hermes, intentMessage):
-    text = u'Alle Teimer wurde abgebrochen'
+    print('test')
+    text = u'Alle Teimer abgebrochen'
     hermes.publish_end_session(intentMessage.session_id, text)
     timer.end()
     TIMER_LIST = []
