@@ -34,7 +34,7 @@ class TimerBase(Thread):
 
             self.wait_seconds = self.get_seconds_from_duration(duration)
         else:
-            text_now = u"Ich habe die Dauer des Timers nicht verstanden, sorry"
+            text_now = u"Ich habe die Dauer des Teimers nicht verstanden, sorry"
             hermes.publish_end_session(intentMessage.session_id, text_now)
             raise Exception('Timer need dutration')
 
@@ -153,23 +153,22 @@ class TimerBase(Thread):
 class TimerSendNotification(TimerBase):
 
     def callback(self):
-        if self.sentence is None:
-            text = u"Dein Timer {} ist gerade abgelaufen".format(str(self.durationRaw))
-        else:
-            text = u"Dein Timer {} ist abgelaufen{}".format(
-                self.durationRaw, self.sentence)
-
         p = SoundPlayer("wakeup.wav", 1)
-        p.play(0.5)  
+        p.play(0.5)
+        if self.sentence is None:
+            text = u"Dein Teimer {} ist gerade abgelaufen".format(str(self.durationRaw))
+        else:
+            text = u"Dein Teimer {} ist abgelaufen{}".format(
+                self.durationRaw, self.sentence)
 
         self.hermes.publish_start_session_notification(site_id=self.site_id, session_initiation_text=text,
                                                        custom_data=None)
 
     def send_end(self):
         if self.sentence is None:
-            text_now = u"Ich werde dich in {} daran errinern dass Dein Timer abgelaufen ist".format(str(self.durationRaw))
+            text_now = u"{} Teimer ab jetzt".format(str(self.durationRaw))
         else:
-            text_now = u"Ich erinnere dich an {} {}".format(str(self.durationRaw), str(self.sentence))
+            text_now = u" {} Teimer {} ab jetzt".format(str(self.durationRaw), str(self.sentence))
 
         self.hermes.publish_end_session(self.session_id, text_now)
 
@@ -202,7 +201,7 @@ def timerAction(hermes, intentMessage):
 def timerRemainingTime(hermes, intentMessage):
     len_timer_list = len(TIMER_LIST)
     if len_timer_list < 1:
-        hermes.publish_end_session(intentMessage.session_id, "Es läuft kein Timer")
+        hermes.publish_end_session(intentMessage.session_id, "Es läuft kein Teimer")
     else:
         text = u''
         for i, timer in enumerate(TIMER_LIST):
@@ -212,9 +211,10 @@ def timerRemainingTime(hermes, intentMessage):
         hermes.publish_end_session(intentMessage.session_id, text)
 
 def timerRemove(hermes, intentMessage):
-    TIMER_LIST = []
-    text = u'Alle Timer wurde abgebrochen'
+    text = u'Alle Teimer wurde abgebrochen'
     hermes.publish_end_session(intentMessage.session_id, text)
+    timer.end()
+    TIMER_LIST = []
 
 def timerList(hermes, intentMessage):
     timer.end()
