@@ -12,3 +12,6 @@ The easiest way to use this Action is to install it with [Sam](https://snips.git
 - Clone the repository on your Pi
 - Run `setup.sh` (it will create a virtualenv, install the dependencies in it and rename config.ini.default to config.ini)
 - Run `action-timer.py`
+
+wakeup sound recored by Caroline Ford
+http://soundbible.com/1022-Hen-Chicken.html
