@@ -29,7 +29,6 @@ class TimerBase(Thread):
 
         if intentMessage.slots.duration:
             duration = intentMessage.slots.duration.first()
-            print(intentMessage.slots.duration)
             self.durationRaw = self.get_duration_raw(duration)
             self.wait_seconds = self.get_seconds_from_duration(duration)
             hermes.publish_start_session_notification(intentMessage.session_id, duration, "")
@@ -116,11 +115,11 @@ class TimerBase(Thread):
         t = str(timedelta(seconds=seconds)).split(':')
 
         if int(t[2]) > 0:
-            add_and = ' et '
-            result += "{} secondes".format(int(t[2]))
+            add_and = ' und '
+            result += "{} Sekunden".format(int(t[2]))
 
         if int(t[1]) > 0:
-            result = "{} minutes {}{}".format(int(t[1]), add_and, result)
+            result = "{} Minuten {}{}".format(int(t[1]), add_and, result)
             if add_and != '':
                 add_and = ', '
             else:
@@ -128,7 +127,7 @@ class TimerBase(Thread):
 
         if int(t[0]) > 0:
 
-            result = "{} heures{}{}".format(int(t[0]), add_and, result)
+            result = "{} Stunden{}{}".format(int(t[0]), add_and, result)
         return result
 
     def run(self):
@@ -186,13 +185,11 @@ class TimerSendAction(TimerBase):
 
 
 def timerRemember(hermes, intentMessage):
-
     timer = TimerSendNotification(hermes, intentMessage)
     timer.start()
 
 
 def timerAction(hermes, intentMessage):
-
     # Example in 15 minutes start the TV
     timer = TimerSendAction(hermes, intentMessage)
     timer.start()
