@@ -5,7 +5,7 @@
 
 The easiest way to use this Action is to install it with [Sam](https://snips.gitbook.io/getting-started/installation)
 
-`sam install actions -g https://github.com/Ultchad/snips-skill-timer.git`
+`sam install actions -g https://github.com/gidocarper/snips-skill-timer`
 
 ## Manual installation
 
