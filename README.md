@@ -15,3 +15,7 @@ The easiest way to use this Action is to install it with [Sam](https://snips.git
 
 wakeup sound recored by Caroline Ford
 http://soundbible.com/1022-Hen-Chicken.html
+
+
+this is a adapted fork of:
+https://github.com/Ultchad/snips-skill-timer
