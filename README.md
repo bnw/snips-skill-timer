@@ -1,4 +1,4 @@
-# Timer french skill for Snips
+# Timer German skill for Snips
 
 
 ## Installation with Sam
