@@ -199,7 +199,7 @@ def timerAction(hermes, intentMessage):
 def timerRemainingTime(hermes, intentMessage):
     len_timer_list = len(TIMER_LIST)
     if len_timer_list < 1:
-        hermes.publish_end_session(intentMessage.session_id, "Il n'y a pas de minuteur en cours")
+        hermes.publish_end_session(intentMessage.session_id, "Es läuft kein Timer")
     else:
         text = u''
         for i, timer in enumerate(TIMER_LIST):            
