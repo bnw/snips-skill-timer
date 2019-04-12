@@ -207,8 +207,7 @@ def timerRemainingTime(hermes, intentMessage):
         hermes.publish_end_session(intentMessage.session_id, text)
 
 def timerRemove(hermes, intentMessage):
-    print('test')
-    text = u'Alle Teimer abgebrochen'
+    text = u'Alle Teimer gelöscht'
     hermes.publish_end_session(intentMessage.session_id, text)
     timer.end()
     TIMER_LIST = []
@@ -216,15 +215,10 @@ def timerRemove(hermes, intentMessage):
 def timerList(hermes, intentMessage):
     timer.end()
 
-
-def timerRemove(hermes, intentMessage):
-    pass
-
-
 if __name__ == "__main__":
 
     with Hermes(MQTT_ADDR) as h:
         h.subscribe_intent("mcitar:timerRemember", timerRemember)\
             .subscribe_intent("mcitar:timerRemainingTime", timerRemainingTime) \
-                .subscribe_intent("mcitar:timerRemove", timerRemove) \
-                .loop_forever()
+            .subscribe_intent("mcitar:timerRemove", timerRemove) \
+            .loop_forever()
