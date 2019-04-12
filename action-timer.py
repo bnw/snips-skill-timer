@@ -10,7 +10,7 @@ MQTT_PORT = 1883
 MQTT_ADDR = "{}:{}".format(MQTT_IP_ADDR, str(MQTT_PORT))
 
 TIMER_LIST = []
-
+TIMER_STOP = false
 
 class TimerBase(Thread):
     """
@@ -206,14 +206,16 @@ def timerRemainingTime(hermes, intentMessage):
                 text += u", "
         hermes.publish_end_session(intentMessage.session_id, text)
 
+
 def timerRemove(hermes, intentMessage):
+    TIMER_LIST.clear()
     text = u'Alle Teimer gelöscht'
     hermes.publish_end_session(intentMessage.session_id, text)
-    timer.end()
-    TIMER_LIST = []
+
 
 def timerList(hermes, intentMessage):
     timer.end()
+
 
 if __name__ == "__main__":
 
