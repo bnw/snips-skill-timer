@@ -201,7 +201,7 @@ def timerRemainingTime(hermes, intentMessage):
     else:
         text = u''
         for i, timer in enumerate(TIMER_LIST):
-            text += u"Es sind noch {} auf dein Timer{}".format(i + 1, timer.remaining_time_str)
+            text += u"Es sind noch {} auf dein Teimer{}".format(i + 1, timer.remaining_time_str)
             if len_timer_list <= i:
                 text += u", "
         hermes.publish_end_session(intentMessage.session_id, text)
@@ -211,6 +211,7 @@ def timerRemove(hermes, intentMessage):
     hermes.publish_end_session(intentMessage.session_id, text)
     timer.end()
     TIMER_LIST = []
+    pass
 
 def timerList(hermes, intentMessage):
     timer.end()
