@@ -207,11 +207,10 @@ def timerRemainingTime(hermes, intentMessage):
         hermes.publish_end_session(intentMessage.session_id, text)
 
 def timerRemove(hermes, intentMessage):
-    text = u'Alle Teimer gelöscht'
-    hermes.publish_end_session(intentMessage.session_id, text)
     timer.end()
     TIMER_LIST = []
-    pass
+    text = u'Alle Teimer gelöscht'
+    hermes.publish_end_session(intentMessage.session_id, text)
 
 def timerList(hermes, intentMessage):
     timer.end()
