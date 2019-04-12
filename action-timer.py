@@ -10,7 +10,6 @@ MQTT_PORT = 1883
 MQTT_ADDR = "{}:{}".format(MQTT_IP_ADDR, str(MQTT_PORT))
 
 TIMER_LIST = []
-TIMER_STOP = false
 
 class TimerBase(Thread):
     """
