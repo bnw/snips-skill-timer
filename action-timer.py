@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 
-from hermes_python.hermes import Hermes
+from hermes_python.hermes import Hermes, MqttOptions
 from datetime import timedelta
 import time
 from threading import Thread
+import toml
 
-MQTT_IP_ADDR = "localhost"
-MQTT_PORT = 1883
-MQTT_ADDR = "{}:{}".format(MQTT_IP_ADDR, str(MQTT_PORT))
+USERNAME_INTENTS = "mcitar"
+MQTT_BROKER_ADDRESS = "localhost:1883"
+MQTT_USERNAME = None
+MQTT_PASSWORD = None
 
 TIMER_LIST = []
 
@@ -72,7 +74,7 @@ class TimerBase(Thread):
         if minutes > 0:
             if length > 0:
                 add_and = ' und '
-            else: 
+            else:
                 add_and = ''
             result = '{} Minuten{}{}'.format(str(minutes), add_and, result)
             length += 1
@@ -81,7 +83,7 @@ class TimerBase(Thread):
                 add_and = ', '
             elif length > 0:
                 add_and = ' und '
-            else: 
+            else:
                 add_and = ''
             result = '{} Stunden{}{}'.format(str(hours), add_and, result)
             length += 1
@@ -90,7 +92,7 @@ class TimerBase(Thread):
                 add_and = ', '
             elif length > 0:
                 add_and = ' und '
-            else: 
+            else:
                 add_and = ''
             result = '{} Tagen{}{}'.format(str(days), add_and, result)
         return result
@@ -217,9 +219,17 @@ def timerList(hermes, intentMessage):
 
 
 if __name__ == "__main__":
+    snips_config = toml.load('/etc/snips.toml')
+    if 'mqtt' in snips_config['snips-common'].keys():
+        MQTT_BROKER_ADDRESS = snips_config['snips-common']['mqtt']
+    if 'mqtt_username' in snips_config['snips-common'].keys():
+        MQTT_USERNAME = snips_config['snips-common']['mqtt_username']
+    if 'mqtt_password' in snips_config['snips-common'].keys():
+        MQTT_PASSWORD = snips_config['snips-common']['mqtt_password']
 
-    with Hermes(MQTT_ADDR) as h:
-        h.subscribe_intent("mcitar:timerRemember", timerRemember)\
-            .subscribe_intent("mcitar:timerRemainingTime", timerRemainingTime) \
-            .subscribe_intent("mcitar:timerRemove", timerRemove) \
-            .loop_forever()
+    mqtt_opts = MqttOptions(username=MQTT_USERNAME, password=MQTT_PASSWORD, broker_address=MQTT_BROKER_ADDRESS)
+    with Hermes(mqtt_options=mqtt_opts) as h:
+        h.subscribe_intent("mcitar:timerRemember", timerRemember)
+        h.subscribe_intent("mcitar:timerRemainingTime", timerRemainingTime)
+        h.subscribe_intent("mcitar:timerRemove", timerRemove)
+        h.loop_forever()
