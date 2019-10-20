@@ -5,6 +5,7 @@ from datetime import timedelta
 import time
 from threading import Thread
 import toml
+import pygame
 
 USERNAME_INTENTS = "mcitar"
 MQTT_BROKER_ADDRESS = "localhost:1883"
@@ -157,6 +158,13 @@ class TimerSendNotification(TimerBase):
         else:
             text = u"Dein {} Teimer ist abgelaufen{}".format(
                 self.durationRaw, self.sentence)
+
+        pygame.mixer.init()
+        pygame.mixer.music.load("/var/lib/snips/skills/snips-skill-timer/Gentle-wake-alarm-clock.mp3")
+        pygame.mixer.music.play()
+
+        while pygame.mixer.music.get_busy() == True:
+            continue
 
         self.hermes.publish_start_session_notification(site_id=self.site_id, session_initiation_text=text,
                                                        custom_data=None)
