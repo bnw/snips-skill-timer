@@ -1,3 +1,2 @@
 hermes-python>=0.7
 toml>=0.10.0
-pygame>=0.*
