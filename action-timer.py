@@ -160,6 +160,8 @@ class TimerSendNotification(TimerBase):
             text = u"Dein {} Teimer ist abgelaufen{}".format(
                 self.durationRaw, self.sentence)
 
+        call(["aplay", "-q", "Gentle-wake-alarm-clock.wav"])
+
         self.hermes.publish_start_session_notification(site_id=self.site_id, session_initiation_text=text,
                                                        custom_data=None)
 
@@ -168,8 +170,6 @@ class TimerSendNotification(TimerBase):
             text_now = u"{} Teimer ab jetzt".format(str(self.durationRaw))
         else:
             text_now = u" {} Teimer {} ab jetzt".format(str(self.durationRaw), str(self.sentence))
-
-        call(["aplay", "-q", "Gentle-wake-alarm-clock.wav"])
 
         self.hermes.publish_end_session(self.session_id, text_now)
 
