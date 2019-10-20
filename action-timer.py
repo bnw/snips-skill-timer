@@ -5,6 +5,8 @@ from datetime import timedelta
 import time
 from threading import Thread
 import toml
+from subprocess import call
+
 
 USERNAME_INTENTS = "mcitar"
 MQTT_BROKER_ADDRESS = "localhost:1883"
@@ -166,6 +168,8 @@ class TimerSendNotification(TimerBase):
             text_now = u"{} Teimer ab jetzt".format(str(self.durationRaw))
         else:
             text_now = u" {} Teimer {} ab jetzt".format(str(self.durationRaw), str(self.sentence))
+
+        call(["aplay", "-q", "Gentle-wake-alarm-clock.wav"])
 
         self.hermes.publish_end_session(self.session_id, text_now)
 
