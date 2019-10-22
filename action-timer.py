@@ -234,9 +234,16 @@ def getFirstSecondTimer(i):
 
 
 def timerRemove(hermes, intentMessage):
+    hermes.publish_continue_session(intentMessage.session_id, u"Möchtest du dein Teimer wirklich löschen?",["mcitar:timerRemoveConfirmation"])
+
+
+def confirmDeletion(hermes, intentMessage):
     TIMER_LIST.clear()
-    text = u'Alle Teimer gelöscht'
-    hermes.publish_end_session(intentMessage.session_id, text)
+    hermes.publish_end_session(intentMessage.session_id, "Alle teimer Wurde gelöscht")
+
+
+def stopDeletion(hermes,intentMessage):
+    hermes.publish_end_session(intentMessage.session_id, "OK")
 
 
 def timerList(hermes, intentMessage):
@@ -257,4 +264,7 @@ if __name__ == "__main__":
         h.subscribe_intent("mcitar:timerRemember", timerRemember)
         h.subscribe_intent("mcitar:timerRemainingTime", timerRemainingTime)
         h.subscribe_intent("mcitar:timerRemove", timerRemove)
+        h.subscribe_intent("mcitar:timerRemoveConfirmation", confirmDeletion)
+        h.subscribe_intent("mcitar:timerDenialConfirmation", stopDeletion) 
+        h.subscribe_intent("mcitar:timerTime", timerRemember)
         h.loop_forever()
