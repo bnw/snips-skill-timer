@@ -211,7 +211,7 @@ def timerAction(hermes, intentMessage):
 
 def timerRemainingTime(hermes, intentMessage):
     len_timer_list = len(TIMER_LIST)
-    text = "Du hast {} Teimer ".format(str(len_timer_list))
+    text = "Du hast {} Teimer. ".format(str(len_timer_list))
     if len_timer_list < 1:
         hermes.publish_end_session(intentMessage.session_id, "Es läuft kein Teimer")
     else:
