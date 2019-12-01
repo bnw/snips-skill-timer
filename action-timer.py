@@ -8,7 +8,7 @@ import toml
 from subprocess import call
 
 
-USERNAME_INTENTS = "mcitar"
+USERNAME_INTENTS = "bnw"
 MQTT_BROKER_ADDRESS = "localhost:1883"
 MQTT_USERNAME = None
 MQTT_PASSWORD = None
@@ -234,7 +234,7 @@ def getFirstSecondTimer(i):
 
 
 def timerRemove(hermes, intentMessage):
-    hermes.publish_continue_session(intentMessage.session_id, u"Möchtest du dein Teimer wirklich löschen?",["mcitar:timerRemoveConfirmation"])
+    hermes.publish_continue_session(intentMessage.session_id, u"Möchtest du dein Teimer wirklich löschen?",[USERNAME_INTENTS + ":timerRemoveConfirmation"])
 
 
 def confirmDeletion(hermes, intentMessage):
@@ -261,10 +261,10 @@ if __name__ == "__main__":
 
     mqtt_opts = MqttOptions(username=MQTT_USERNAME, password=MQTT_PASSWORD, broker_address=MQTT_BROKER_ADDRESS)
     with Hermes(mqtt_options=mqtt_opts) as h:
-        h.subscribe_intent("mcitar:timerRemember", timerRemember)
-        h.subscribe_intent("mcitar:timerRemainingTime", timerRemainingTime)
-        h.subscribe_intent("mcitar:timerRemove", timerRemove)
-        h.subscribe_intent("mcitar:timerRemoveConfirmation", confirmDeletion)
-        h.subscribe_intent("mcitar:timerDenialConfirmation", stopDeletion) 
-        h.subscribe_intent("mcitar:timerTime", timerRemember)
+        h.subscribe_intent(USERNAME_INTENTS + ":timerRemember", timerRemember)
+        h.subscribe_intent(USERNAME_INTENTS + ":timerRemainingTime", timerRemainingTime)
+        h.subscribe_intent(USERNAME_INTENTS + ":timerRemove", timerRemove)
+        h.subscribe_intent(USERNAME_INTENTS + ":timerRemoveConfirmation", confirmDeletion)
+        h.subscribe_intent(USERNAME_INTENTS + ":timerDenialConfirmation", stopDeletion) 
+        h.subscribe_intent(USERNAME_INTENTS + ":timerTime", timerRemember)
         h.loop_forever()
